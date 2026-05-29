@@ -30,6 +30,7 @@ public class PlayerCombat : MonoBehaviour
     private float _lastAttackTime;
     private bool  _isAttacking  = false;
     private bool  _isHurt       = false;
+    private Vector3 _startPosition; // Vị trí xuất phát ban đầu để hồi sinh
 
     /// <summary>True khi nhân vật đang trong trạng thái khóa hành động dưới đất (chỉ đỡ đòn hoặc bị đau mới khóa).</summary>
     public bool IsActing 
@@ -48,6 +49,11 @@ public class PlayerCombat : MonoBehaviour
         _input    = GetComponent<PlayerInputHandler>();
         _stats    = GetComponent<PlayerStats>();
         _animator = GetComponent<PlayerAnimator>();
+    }
+
+    private void Start()
+    {
+        _startPosition = transform.position; // Lưu lại tọa độ xuất phát ban đầu
     }
 
     // ────────────────────────────────────────────────────────────────
@@ -165,9 +171,29 @@ public class PlayerCombat : MonoBehaviour
     private IEnumerator Die()
     {
         _animator.TriggerDeath();
-        yield return new WaitForSeconds(1.5f);
-        // TODO: Mở màn Game Over hoặc respawn
-        gameObject.SetActive(false);
+
+        // Chỉ đóng băng vận tốc ngang để nhân vật nằm gục tại chỗ chứ không bị trượt đi
+        if (TryGetComponent<Rigidbody2D>(out var rb))
+        {
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+        }
+
+        yield return new WaitForSeconds(2.0f); // Đợi 2 giây chạy xong hoạt ảnh chết
+
+        // Dịch chuyển về vị trí xuất phát ban đầu
+        transform.position = _startPosition;
+
+        // Khôi phục lại chỉ số máu và trạng thái sống
+        _stats.ResetStats();
+
+        // Đưa hoạt ảnh của nhân vật quay về Idle (đứng yên)
+        _animator.ResetDeath();
+
+        // Reset lại vận tốc vật lý
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+        }
     }
 
     // ────────────────────────────────────────────────────────────────

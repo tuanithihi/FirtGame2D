@@ -63,4 +63,12 @@ public class PlayerStats : MonoBehaviour
         currentHP = Mathf.Min(maxHP, currentHP + amount);
         OnHPChanged?.Invoke(currentHP, maxHP);
     }
+
+    /// <summary>Đặt lại toàn bộ chỉ số để hồi sinh.</summary>
+    public void ResetStats()
+    {
+        isDead = false;
+        currentHP = maxHP;
+        OnHPChanged?.Invoke(currentHP, maxHP);
+    }
 }

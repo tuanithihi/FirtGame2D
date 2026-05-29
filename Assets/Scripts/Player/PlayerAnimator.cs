@@ -104,6 +104,13 @@ public class PlayerAnimator : MonoBehaviour
         _anim.SetBool(HashDeath, true);
     }
 
+    /// <summary>Đặt lại trạng thái hoạt ảnh để hồi sinh.</summary>
+    public void ResetDeath()
+    {
+        TrySetBool(HashDeath, false);
+        _anim.Play("Đứng", 0, 0f); // Trả về trạng thái đứng yên mặc định ("Đứng")
+    }
+
     // ────────────────────────────────────────────────────────────────
     // Helper: SetBool / SetInt chỉ gọi khi parameter tồn tại trong controller
     // (tránh lỗi nếu controller cũ chưa có đủ parameters)
