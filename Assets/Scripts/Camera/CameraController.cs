@@ -19,6 +19,10 @@ public class CameraController : MonoBehaviour
 
     [Header("=== GIỚI HẠN BẢN ĐỒ (BOUNDS) ===")]
     [SerializeField] private bool enableBounds = false;
+    [Tooltip("Chỉ khóa camera theo chiều ngang (Trái / Phải)")]
+    [SerializeField] private bool limitHorizontal = true;
+    [Tooltip("Khóa camera theo chiều dọc (Trên / Dưới)")]
+    [SerializeField] private bool limitVertical = false;
     [SerializeField] private Vector2 minBounds;
     [SerializeField] private Vector2 maxBounds;
 
@@ -66,8 +70,14 @@ public class CameraController : MonoBehaviour
             Vector3 targetPosition = target.position + offset;
             if (enableBounds)
             {
-                targetPosition.x = Mathf.Clamp(targetPosition.x, minBounds.x, maxBounds.x);
-                targetPosition.y = Mathf.Clamp(targetPosition.y, minBounds.y, maxBounds.y);
+                if (limitHorizontal)
+                {
+                    targetPosition.x = Mathf.Clamp(targetPosition.x, minBounds.x, maxBounds.x);
+                }
+                if (limitVertical)
+                {
+                    targetPosition.y = Mathf.Clamp(targetPosition.y, minBounds.y, maxBounds.y);
+                }
             }
             transform.position = targetPosition;
         }
@@ -124,8 +134,14 @@ public class CameraController : MonoBehaviour
         // 3. Giới hạn camera trong khoảng biên bản đồ (nếu bật)
         if (enableBounds)
         {
-            targetPosition.x = Mathf.Clamp(targetPosition.x, minBounds.x, maxBounds.x);
-            targetPosition.y = Mathf.Clamp(targetPosition.y, minBounds.y, maxBounds.y);
+            if (limitHorizontal)
+            {
+                targetPosition.x = Mathf.Clamp(targetPosition.x, minBounds.x, maxBounds.x);
+            }
+            if (limitVertical)
+            {
+                targetPosition.y = Mathf.Clamp(targetPosition.y, minBounds.y, maxBounds.y);
+            }
         }
 
         // 4. Di chuyển camera mượt mà bằng SmoothDamp

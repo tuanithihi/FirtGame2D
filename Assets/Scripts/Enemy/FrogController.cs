@@ -12,6 +12,8 @@ public class FrogController : MonoBehaviour, IDamageable
 {
     [Header("=== CHỈ SỐ CƠ BẢN ===")]
     [SerializeField] private float maxHP = 30f;
+    public float MaxHP => maxHP;
+    public event System.Action<float, float> OnHPChanged;
     [SerializeField] private float jumpForceX = 3f;     // Lực nhảy xa
     [SerializeField] private float jumpForceY = 5f;     // Lực nhảy cao
 
@@ -82,6 +84,7 @@ public class FrogController : MonoBehaviour, IDamageable
         _rb.freezeRotation = true;
         
         _startPosition = transform.position; // Ghi nhận vị trí xuất phát
+        OnHPChanged?.Invoke(_currentHP, maxHP);
     }
 
     private void Update()
@@ -239,6 +242,7 @@ public class FrogController : MonoBehaviour, IDamageable
         if (_isDead) return;
 
         _currentHP = Mathf.Max(0f, _currentHP - damage);
+        OnHPChanged?.Invoke(_currentHP, maxHP);
 
         // Sinh hiệu ứng tóe máu nếu có gán Prefab
         if (bloodParticlePrefab != null)
@@ -308,6 +312,7 @@ public class FrogController : MonoBehaviour, IDamageable
         // Đưa quái về vị trí ban đầu và khôi phục chỉ số
         transform.position = _startPosition;
         _currentHP = maxHP;
+        OnHPChanged?.Invoke(_currentHP, maxHP);
         _isDead = false;
         _isHurt = false;
 

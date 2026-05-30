@@ -11,6 +11,8 @@ public class OrgeController : MonoBehaviour, IDamageable
 {
     [Header("=== CHỈ SỐ CƠ BẢN ===")]
     [SerializeField] private float maxHP = 50f;
+    public float MaxHP => maxHP;
+    public event System.Action<float, float> OnHPChanged;
     [SerializeField] private float walkSpeed = 1f;        // Tốc độ đi tuần
     [SerializeField] private float chaseSpeed = 1.8f;      // Tốc độ đuổi theo Player
     
@@ -83,6 +85,7 @@ public class OrgeController : MonoBehaviour, IDamageable
         }
 
         _startPosition = transform.position; // Lưu vị trí xuất phát
+        OnHPChanged?.Invoke(_currentHP, maxHP);
     }
 
     private void Update()
@@ -231,6 +234,7 @@ public class OrgeController : MonoBehaviour, IDamageable
         if (_isDead) return;
 
         _currentHP = Mathf.Max(0f, _currentHP - damage);
+        OnHPChanged?.Invoke(_currentHP, maxHP);
 
         // Sinh hiệu ứng tóe máu nếu có gán Prefab
         if (bloodParticlePrefab != null)
@@ -300,6 +304,7 @@ public class OrgeController : MonoBehaviour, IDamageable
         // Đưa quái về vị trí ban đầu và khôi phục chỉ số
         transform.position = _startPosition;
         _currentHP = maxHP;
+        OnHPChanged?.Invoke(_currentHP, maxHP);
         _isDead = false;
         _isHurt = false;
         _isAttacking = false;
