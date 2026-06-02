@@ -13,6 +13,9 @@ public class PlayerHealthUI : MonoBehaviour
     [Header("=== THANH MÁU UI ===")]
     [Tooltip("Ảnh hiển thị lượng máu màu đỏ (máu_1) - Image Type cần set là Filled")]
     [SerializeField] private Image healthBarFill;
+    
+    [Tooltip("Ảnh hiển thị Avatar đại diện của nhân vật")]
+    [SerializeField] private Image avatarImage;
 
     [Header("=== HIỆU ỨNG GIẢM MÁU ===")]
     [Tooltip("Tốc độ co rút mượt mà của thanh máu khi bị đánh trúng")]
@@ -42,6 +45,12 @@ public class PlayerHealthUI : MonoBehaviour
             if (healthBarFill != null)
             {
                 healthBarFill.fillAmount = _targetFill;
+            }
+
+            // Tự động gán ảnh đại diện của nhân vật đang chơi
+            if (avatarImage != null && playerStats.AvatarSprite != null)
+            {
+                avatarImage.sprite = playerStats.AvatarSprite;
             }
         }
     }

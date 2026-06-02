@@ -22,6 +22,10 @@ public class PlayerStats : MonoBehaviour
     [Header("=== TRẠNG THÁI ===")]
     public bool isDead = false;
 
+    [Header("=== GIAO DIỆN UI ===")]
+    [SerializeField] private Sprite avatarSprite;    // Ảnh đại diện riêng của nhân vật này
+    public Sprite AvatarSprite => avatarSprite;
+
     // Sự kiện thông báo khi HP thay đổi
     public System.Action<float, float> OnHPChanged;   // (currentHP, maxHP)
     public System.Action OnPlayerDied;

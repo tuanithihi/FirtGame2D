@@ -35,6 +35,11 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float shakeMagnitude = 0.1f;
     [SerializeField] private float dampingSpeed = 1f;
 
+    [Header("=== ACTIVE AREA ===")]
+    [Tooltip("Khu vực hiện tại đang hoạt động (tự động gán bằng code)")]
+    public GameArea activeArea;
+    private GameArea _lastActiveArea;
+
     // Các biến phụ trợ nội bộ
     private Vector3 _velocity = Vector3.zero;
     private Vector3 _currentOffset;
@@ -128,6 +133,24 @@ public class CameraController : MonoBehaviour
         _currentOffset.y = offset.y;
         _currentOffset.z = offset.z;
 
+        // 0. Đồng bộ giới hạn từ GameArea đang hoạt động thời gian thực (giúp test trực tiếp cực sướng)
+        if (activeArea != null)
+        {
+            if (activeArea != _lastActiveArea)
+            {
+                _lastActiveArea = activeArea;
+            }
+
+            enableBounds = activeArea.customCameraBounds;
+            if (enableBounds)
+            {
+                minBounds = activeArea.minCameraBounds;
+                maxBounds = activeArea.maxCameraBounds;
+                limitHorizontal = true; // Luôn luôn khóa chiều ngang
+                limitVertical = activeArea.limitVertical;
+            }
+        }
+
         // 2. Tính toán vị trí mong muốn của Camera
         Vector3 targetPosition = target.position + _currentOffset;
 
@@ -155,6 +178,18 @@ public class CameraController : MonoBehaviour
         }
 
         transform.position = newPos;
+    }
+
+    /// <summary>
+    /// Thay đổi biên giới hạn camera (dùng khi dịch chuyển sang map/phòng mới).
+    /// </summary>
+    public void SetBounds(Vector2 min, Vector2 max, bool enable, bool horizontal, bool vertical)
+    {
+        enableBounds = enable;
+        limitHorizontal = horizontal;
+        limitVertical = vertical;
+        minBounds = min;
+        maxBounds = max;
     }
 
     /// <summary>
